@@ -3,7 +3,7 @@ Created on Nov 27, 2012
 
 @author: Bogdan
 '''
-
+import os
 from flask import Flask,redirect
 from flask.globals import request
 from flask.templating import render_template
@@ -13,7 +13,7 @@ import flask
 
 
 app = Flask(__name__)
-engine = create_engine('postgresql+psycopg2://postgres:test123@localhost/shorts')
+engine = create_engine('postgresql+psycopg2://*')
 connection= engine.connect()
 connection.execute("CREATE TABLE IF NOT EXISTS shorturls (short TEXT,long TEXT)")
 connection.close()
@@ -34,12 +34,12 @@ def return_short_url(url):
                 ok=1 #found a short link for the current link
                 break
         if ok:
-            rv="Long link: "+url+"<br>Short link: http://localhost:5000/slink/"+output[i]
+            rv="Long link: "+url+"<br>Short link: http://bazub-shorturl.herokuapp.com/slink/"+output[i]
         else: 
             rv="Could not create a short link. Sorry!"
     else:
         short=str(get_short_for_long(url))
-        rv="1Long link: "+url+"<br>Short link: http://localhost:5000/slink/"+short
+        rv="1Long link: "+url+"<br>Short link: http://bazub-shorturl.herokuapp.com/slink/"+short
     
     return rv
 @app.route('/slink/<url>')
@@ -51,8 +51,9 @@ def return_long_url(url):
 @app.route('/transform',methods=['POST'])
 def redir_to_link():
     rv =str(flask.request.form['url'])
-    return redirect("http://localhost:5000/link/"+rv)
+    return redirect("/link/"+rv)
     #return '<meta http-equiv="REFRESH" content="0;url=http://localhost:5000/link/'+rv+'">'
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)

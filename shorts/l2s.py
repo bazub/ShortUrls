@@ -5,7 +5,7 @@ Created on Nov 28, 2012
 '''
 from sqlalchemy.engine import create_engine
 import hashlib
-engine = create_engine('postgresql+psycopg2://postgres:test123@localhost/shorts')
+engine = create_engine('postgresql+psycopg2://*')
 def long2short(url):
     base32='abcdefghijklmnopqrstuvwxyz012345'
     url=url.lower()
